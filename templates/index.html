@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CineMatch</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --glass: rgba(255, 255, 255, 0.07);
+      --glass-border: rgba(255, 255, 255, 0.15);
+      --glass-hover: rgba(255, 255, 255, 0.12);
+      --accent: #f5a623;
+      --accent2: #e8436a;
+      --text: #f0ece4;
+      --muted: rgba(240, 236, 228, 0.5);
+      --blur: blur(20px);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      background: #0a0a0f;
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* ── Animated Background ── */
+    .bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 20%, rgba(232, 67, 106, 0.18) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 80% 80%, rgba(245, 166, 35, 0.15) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 50% at 50% 50%, rgba(100, 60, 180, 0.12) 0%, transparent 70%),
+        #0a0a0f;
+    }
+
+    .bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.015'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    /* ── Layout ── */
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 60px 24px 80px;
+    }
+
+    /* ── Header ── */
+    header {
+      text-align: center;
+      margin-bottom: 48px;
+      animation: fadeDown 0.8s ease both;
+    }
+
+    .logo-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .logo-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 8px 32px rgba(232, 67, 106, 0.4);
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 2.8rem);
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff 30%, var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+    }
+
+    .tagline {
+      color: var(--muted);
+      font-size: 0.95rem;
+      font-weight: 300;
+      letter-spacing: 0.3px;
+    }
+
+    /* ── Glass Card ── */
+    .glass-card {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 36px;
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      box-shadow:
+        0 8px 32px rgba(0,0,0,0.4),
+        inset 0 1px 0 rgba(255,255,255,0.1);
+      animation: fadeUp 0.8s ease 0.2s both;
+    }
+
+    /* ── Form ── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-group.full { grid-column: span 2; }
+
+    label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+    }
+
+    .label-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      border-radius: 50%;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #fff;
+      margin-right: 6px;
+    }
+
+    input, select {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 12px 16px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      transition: all 0.25s ease;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='rgba(255,255,255,0.4)' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+      cursor: pointer;
+    }
+
+    select option {
+      background: #1a1a2e;
+      color: #fff;
+    }
+
+    input::placeholder { color: rgba(255,255,255,0.2); }
+
+    input:focus, select:focus {
+      border-color: var(--accent);
+      background: rgba(245, 166, 35, 0.08);
+      box-shadow: 0 0 0 3px rgba(245, 166, 35, 0.1);
+    }
+
+    /* ── Divider ── */
+    .divider {
+      height: 1px;
+      background: var(--glass-border);
+      margin: 24px 0;
+      grid-column: span 2;
+    }
+
+    /* ── Button ── */
+    .btn {
+      grid-column: span 2;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--accent2) 0%, var(--accent) 100%);
+      border: none;
+      border-radius: 14px;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 20px rgba(232, 67, 106, 0.35);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(232, 67, 106, 0.5); }
+    .btn:hover::before { opacity: 1; }
+    .btn:active { transform: translateY(0); }
+
+    /* ── Result ── */
+    .result {
+      margin-top: 28px;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .result-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--accent);
+      font-weight: 500;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .result-label::before, .result-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(245, 166, 35, 0.3);
+    }
+
+    .movie-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 20px;
+      line-height: 1.2;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .meta-item {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .meta-item .meta-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .meta-item .meta-value {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #fff;
+    }
+
+    .meta-item.rating .meta-value { color: var(--accent); }
+
+    .genres-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .genre-tag {
+      padding: 5px 14px;
+      background: rgba(232, 67, 106, 0.15);
+      border: 1px solid rgba(232, 67, 106, 0.3);
+      border-radius: 20px;
+      font-size: 0.78rem;
+      color: #ffc0cb;
+      text-transform: capitalize;
+    }
+
+    .overview-text {
+      font-size: 0.88rem;
+      line-height: 1.7;
+      color: var(--muted);
+      border-top: 1px solid var(--glass-border);
+      padding-top: 16px;
+    }
+
+    /* ── Error ── */
+    .error-box {
+      margin-top: 20px;
+      background: rgba(232, 67, 106, 0.1);
+      border: 1px solid rgba(232, 67, 106, 0.3);
+      border-radius: 14px;
+      padding: 16px 20px;
+      color: #ff8fab;
+      font-size: 0.9rem;
+      animation: fadeUp 0.4s ease both;
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 520px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .form-group.full, .btn, .divider { grid-column: span 1; }
+      .meta-grid { grid-template-columns: 1fr 1fr; }
+      .glass-card { padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg"></div>
+
+<div class="container">
+
+  <header>
+    <div class="logo-wrap">
+      <div class="logo-icon">🎬</div>
+      <h1>CineMatch</h1>
+    </div>
+    <p class="tagline">Tell us your mood — we'll find your perfect film</p>
+  </header>
+
+  <div class="glass-card">
+    <form method="POST">
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label><span class="label-num">1</span>Genre</label>
+          <select name="genre">
+            <option value="">Any Genre</option>
+            <option value="action">Action</option>
+            <option value="comedy">Comedy</option>
+            <option value="drama">Drama</option>
+            <option value="horror">Horror</option>
+            <option value="romance">Romance</option>
+            <option value="thriller">Thriller</option>
+            <option value="animation">Animation</option>
+            <option value="science fiction">Sci-Fi</option>
+            <option value="documentary">Documentary</option>
+            <option value="crime">Crime</option>
+            <option value="fantasy">Fantasy</option>
+            <option value="adventure">Adventure</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label><span class="label-num">2</span>Language</label>
+          <select name="language">
+            <option value="any">Any Language</option>
+            <option value="en">English</option>
+            <option value="bn">Bengali</option>
+            <option value="ko">Korean</option>
+            <option value="fr">French</option>
+            <option value="ja">Japanese</option>
+            <option value="hi">Hindi</option>
+            <option value="es">Spanish</option>
+            <option value="de">German</option>
+          </select>
+        </div>
+
+        <div class="form-group full">
+          <label><span class="label-num">3</span>Mood / Keywords</label>
+          <input type="text" name="mood" placeholder="e.g. revenge, friendship, space, love...">
+        </div>
+
+        <div class="form-group">
+          <label><span class="label-num">4</span>Year Range</label>
+          <input type="text" name="year_range" placeholder="e.g. 2000-2023">
+        </div>
+
+        <div class="form-group">
+          <label><span class="label-num">5</span>Min Rating</label>
+          <input type="number" name="min_rating" min="0" max="10" step="0.5" placeholder="e.g. 7">
+        </div>
+
+        <div class="form-group">
+          <label><span class="label-num">6</span>Popularity</label>
+          <select name="popularity">
+            <option value="any">Any</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Hidden Gems</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label><span class="label-num">7</span>Runtime</label>
+          <select name="runtime">
+            <option value="any">Any</option>
+            <option value="short">Short (&lt;1hr)</option>
+            <option value="medium">Medium (1–1h40)</option>
+            <option value="standard">Standard (1h40–2h30)</option>
+            <option value="long">Long (&gt;2h30)</option>
+          </select>
+        </div>
+
+        <div class="divider"></div>
+
+        <button class="btn" type="submit">✦ Find My Match</button>
+
+      </div>
+    </form>
+  </div>
+
+  {% if error %}
+  <div class="error-box">⚠️ {{ error }}</div>
+  {% endif %}
+
+  {% if result %}
+  <div class="result">
+    <div class="glass-card">
+      <div class="result-label">Your Perfect Match</div>
+      <div class="movie-title">{{ result.title }}</div>
+
+      <div class="meta-grid">
+        <div class="meta-item">
+          <span class="meta-label">Year</span>
+          <div class="meta-value">{{ result.year }}</div>
+        </div>
+        <div class="meta-item rating">
+          <span class="meta-label">Rating</span>
+          <div class="meta-value">⭐ {{ result.rating }}</div>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Language</span>
+          <div class="meta-value">{{ result.language }}</div>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Runtime</span>
+          <div class="meta-value">{{ result.runtime }}m</div>
+        </div>
+      </div>
+
+      <div class="genres-row">
+        {% for genre in result.genres.split(', ') %}
+        <span class="genre-tag">{{ genre }}</span>
+        {% endfor %}
+      </div>
+
+      <div class="overview-text">{{ result.overview }}</div>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+
+</body>
+</html>
