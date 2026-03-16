@@ -12,7 +12,7 @@ The goal of CineMatch is to reduce decision fatigue by enabling users to
 receive a tailored recommendation in seconds rather than spending long
 periods browsing through streaming platforms.
 
-🌐 Live on : https://cinematch-vew4.onrender.com
+🌐 Live on : https://cinematch-production-10ae.up.railway.app
 
 ⸻
 
